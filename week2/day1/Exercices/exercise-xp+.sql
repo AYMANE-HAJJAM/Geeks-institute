@@ -27,7 +27,6 @@ select first_name , last_name from students where first_name ilike '%a%';
 select first_name , last_name from students where first_name ilike 'a%';
 select first_name , last_name from students where first_name ilike '%a';
 select first_name , last_name from students where first_name ilike '%a_';
-select first_name , last_name from students where id = 1;
-select first_name , last_name from students where id = 3;
+select first_name , last_name from students where id in(1, 3);
 select * from students where birth_date = '1/01/2000'
 
