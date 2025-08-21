@@ -1,43 +1,43 @@
-# #Exercise 1:
-# car = ["Volkswagen", "Toyota", "Ford" ,"Motor", "Honda", "Chevrolet"]
+#Exercise 1:
+car = ["Volkswagen", "Toyota", "Ford" ,"Motor", "Honda", "Chevrolet"]
 
-# print("Number of car companies: ", len(car))
+print("Number of car companies: ", len(car))
 
-# reversed_car = sorted(car, reverse=True)
-# print("Reversed list of car companies: ", reversed_car)
+reversed_car = sorted(car, reverse=True)
+print("Reversed list of car companies: ", reversed_car)
 
-# companies_with_o = [c for c in car if "o" in c.lower()]
-# print("Number of companies with 'o' in their name:", len(companies_with_o))
+companies_with_o = [c for c in car if "o" in c.lower()]
+print("Number of companies with 'o' in their name:", len(companies_with_o))
 
-# companies_not_with_i = [c for c in car if "i" not in c.lower()]
-# print("Number of companies without 'i' in their name:", len(companies_not_with_i))
-
-
-
-# car_list = ["Honda", "Volkswagen", "Toyota", "Ford Motor", "Honda", "Chevrolet", "Toyota"]
-
-# unique_cars = list(set(car_list))
+companies_not_with_i = [c for c in car if "i" not in c.lower()]
+print("Number of companies without 'i' in their name:", len(companies_not_with_i))
 
 
-# cars_string = ", ".join(unique_cars)
 
-# print("Companies without duplicates:", cars_string)
-# print("Number of unique companies:", len(unique_cars))
+car_list = ["Honda", "Volkswagen", "Toyota", "Ford Motor", "Honda", "Chevrolet", "Toyota"]
 
-# sorted_cars = sorted(car_list)
-# reversed_letters = [car[::-1] for car in sorted_cars]
-# print(reversed_letters)
+unique_cars = list(set(car_list))
 
-# # Exercise 2:
-# def get_full_name(first_name, last_name, middle_name=""):
-#     if middle_name:
-#         full_name = f"{first_name} {middle_name} {last_name}"
-#     else:
-#         full_name = f"{first_name} {last_name}"
-#     return full_name
 
-# print(get_full_name(first_name="john", middle_name="hooker", last_name="lee"))
-# print(get_full_name(first_name="bruce", last_name="lee"))
+cars_string = ", ".join(unique_cars)
+
+print("Companies without duplicates:", cars_string)
+print("Number of unique companies:", len(unique_cars))
+
+sorted_cars = sorted(car_list)
+reversed_letters = [car[::-1] for car in sorted_cars]
+print(reversed_letters)
+
+# Exercise 2:
+def get_full_name(first_name, last_name, middle_name=""):
+    if middle_name:
+        full_name = f"{first_name} {middle_name} {last_name}"
+    else:
+        full_name = f"{first_name} {last_name}"
+    return full_name
+
+print(get_full_name(first_name="john", middle_name="hooker", last_name="lee"))
+print(get_full_name(first_name="bruce", last_name="lee"))
 
 # Exercise 3:
 MORSE_CODE_DICT = {
