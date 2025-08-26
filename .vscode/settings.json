@@ -17,6 +17,35 @@
             "name": "students",
             "database": "bootcamp",
             "username": "postgres"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "python",
+            "database": "python",
+            "username": "postgres"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "country",
+            "database": "country",
+            "username": "postgres",
+            "password": "123456"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "Authentication",
+            "database": "Authentication",
+            "username": "postgres",
+            "password": "123456"
         }
     ]
 }
