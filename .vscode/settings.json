@@ -46,6 +46,18 @@
             "database": "Authentication",
             "username": "postgres",
             "password": "123456"
+        },
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "cars",
+            "connectString": "postgresql://neondb_owner:npg_NsEm48qnACjv@ep-cold-sky-ad0ra1rv-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
         }
     ]
 }

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl p-8 my-6 mx-auto bg-white rounded-xl shadow">
+    <img 
+        src="https://picsum.photos/600/400?random={{ vehicle.id }}" 
+        alt="Car Image" 
+        class="w-full h-64 object-cover rounded-lg mb-6"
+    />
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ vehicle.name }} ({{ vehicle.model }})</h2>
+    <p class="text-gray-600 mb-2"><strong>Year:</strong> {{ vehicle.year }}</p>
+    <p class="text-gray-600 mb-2"><strong>Price:</strong> ${{ vehicle.price }}</p>
+    <p class="text-gray-600 mb-2"><strong>Status:</strong> 
+        <span class="px-2 py-1 rounded-full text-xs font-semibold
+            {% if vehicle.status == 'Available' %}
+                bg-green-100 text-green-700
+            {% else %}
+                bg-red-100 text-red-700
+            {% endif %}
+        ">
+            {{ vehicle.status }}
+        </span>
+    </p>
+    <a href="/" class="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700">⬅ Back</a>
+</div>
+{% endblock %}
