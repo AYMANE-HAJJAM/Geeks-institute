@@ -16,16 +16,6 @@ CREATE TABLE customers (
 );
 
 
-CREATE TABLE salles (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    location VARCHAR(150),
-    salesperson_id INTEGER NOT NULL 
-        REFERENCES salespeople(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
 CREATE TABLE Vehicles (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
