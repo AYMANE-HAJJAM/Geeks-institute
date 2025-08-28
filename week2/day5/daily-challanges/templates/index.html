@@ -24,7 +24,7 @@
 <div class="grid grid-cols-1 py-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
     {% for vehicle in vehicles %}
     <div class="bg-white border border-gray-100 rounded-lg shadow-sm p-4 flex flex-col hover:shadow-md transition h-full">
-        <img src="{{ vehicle.image or 'https://picsum.photos/400/600?random=' ~ loop.index }}" alt="Car Image"
+        <img src="{{ vehicle.image }}" alt="Car Image"
             class="w-full h-36 object-cover rounded-md mb-3" />
         <div class="mb-1">
             <span class="text-base font-medium text-gray-800">{{ vehicle.name }}</span>

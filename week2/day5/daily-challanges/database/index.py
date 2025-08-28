@@ -1,9 +1,5 @@
 import os
 import psycopg2
-from psycopg2.extras import RealDictCursor
-from dotenv import load_dotenv
-
-load_dotenv()
 
 def connect_to_db():
     try:
@@ -14,9 +10,7 @@ def connect_to_db():
             password=os.getenv('PGPASSWORD'),
             sslmode=os.getenv('PGSSLMODE')
         )
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute("SELECT NOW()")
-        print(cursor.fetchone())
-        conn.close()
+        return conn
     except Exception as e:
         print("Connection failed:", e)
+        return None
