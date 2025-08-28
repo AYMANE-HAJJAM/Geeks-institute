@@ -15,7 +15,6 @@ CREATE TABLE customers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE TABLE Vehicles (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -24,8 +23,7 @@ CREATE TABLE Vehicles (
     year INT NOT NULL,
     status VARCHAR(20) NOT NULL CHECK (status IN ('Available', 'Sold')),
     image VARCHAR(255),
-    salesperson_id INTEGER REFERENCES salespeople(id) ON DELETE SET NULL ON UPDATE CASCADE,
-    salle_id INTEGER REFERENCES salles(id) ON DELETE SET NULL ON UPDATE CASCADE
+    salesperson_id INTEGER REFERENCES salespeople(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 
@@ -39,14 +37,23 @@ CREATE TABLE sales (
 );
 
 
-INSERT INTO Vehicles (name, model, price, year, status, image) VALUES
-('Toyota', 'Camry', 25000, 2022, 'Available', '/static/images/toyota_camry.jpg'),
-('BMW', 'X5', 50000, 2023, 'Sold', '/static/images/bmw_x5.jpg'),
-('Mercedes', 'C-Class', 45000, 2021, 'Available', '/static/images/mercedes_cclass.jpg'),
-('Honda', 'Civic', 20000, 2022, 'Available', '/static/images/honda_civic.jpg'),
-('Audi', 'A4', 40000, 2023, 'Sold', '/static/images/audi_a4.jpg');
+
 
 INSERT INTO Vehicles (name, model, price, year, status, image) VALUES
-('Ford', 'Mustang', 30000, 2022, 'Available', '/static/images/Untitled design.png')
+('Toyota', 'Camry', 25000, 2022, 'Available', '/static/images/toyota.jpg'),
+('BMW', 'X5', 50000, 2023, 'Sold', '/static/images/bmw.jpg'),
+('Mercedes', 'C-Class', 45000, 2021, 'Available', '/static/images/mercedes.jpg'),
+('Honda', 'Civic', 20000, 2022, 'Available', '/static/images/honda.jpg'),
+('Audi', 'A4', 40000, 2023, 'Sold', '/static/images/audi.jpg');
+
+INSERT INTO Vehicles (name, model, price, year, status, image) VALUES
+('Ford', 'Mustang', 30000, 2022, 'Available', '/static/images/ford.jpg')
 
 
+
+DROP TABLE IF EXISTS salles CASCADE;
+DROP TABLE IF EXISTS sales CASCADE;
+DROP TABLE IF EXISTS Vehicles CASCADE;
+DROP TABLE IF EXISTS customers CASCADE;
+DROP TABLE IF EXISTS salespeople CASCADE;
+DROP TABLE IF EXISTS Vehicles CASCADE;
