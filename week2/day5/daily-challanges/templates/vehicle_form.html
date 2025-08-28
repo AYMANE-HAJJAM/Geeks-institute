@@ -2,55 +2,69 @@
 
 {% block content %}
 <div class="flex justify-center items-center my-6 min-h-[60vh]">
-    <form method="POST" class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">{{ action }} Vehicle</h2>
+  <form method="POST" enctype="multipart/form-data" class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">{{ action }} Vehicle</h2>
 
-        <!-- Flash messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <div class="mb-4">
-              {% for category, message in messages %}
-                <div class="text-center text-sm px-3 py-2 rounded
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mb-4">
+      {% for category, message in messages %}
+      <div class="text-center text-sm px-3 py-2 rounded
                     {% if category == 'success' %} bg-green-100 text-green-800
                     {% elif category == 'danger' %} bg-red-100 text-red-800
                     {% elif category == 'warning' %} bg-yellow-100 text-yellow-800
                     {% else %} bg-gray-100 text-gray-800 {% endif %}">
-                  {{ message }}
-                </div>
-              {% endfor %}
-            </div>
-          {% endif %}
-        {% endwith %}
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
 
-        <div class="mb-4">
-            <label class="block text-gray-700 mb-2" for="name">Name</label>
-            <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   type="text" name="name" id="name" required value="{{ vehicle.name if vehicle else '' }}">
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 mb-2" for="model">Model</label>
-            <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   type="text" name="model" id="model" required value="{{ vehicle.model if vehicle else '' }}">
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 mb-2" for="price">Price</label>
-            <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   type="number" step="0.01" name="price" id="price" required value="{{ vehicle.price if vehicle else '' }}">
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 mb-2" for="year">Year</label>
-            <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   type="number" name="year" id="year" required value="{{ vehicle.year if vehicle else '' }}">
-        </div>
-        <div class="mb-6">
-            <label class="block text-gray-700 mb-2" for="status">Status</label>
-            <select class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    name="status" id="status" required>
-                <option value="Available" {% if vehicle and vehicle.status == 'Available' %}selected{% endif %}>Available</option>
-                <option value="Sold" {% if vehicle and vehicle.status == 'Sold' %}selected{% endif %}>Sold</option>
-            </select>
-        </div>
-        <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium" type="submit">{{ action }}</button>
-    </form>
+    <div class="mb-4">
+      <label class="block text-gray-700 mb-2" for="name">Name</label>
+      <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        type="text" name="name" id="name" required value="{{ vehicle.name if vehicle else '' }}">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 mb-2" for="model">Model</label>
+      <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        type="text" name="model" id="model" required value="{{ vehicle.model if vehicle else '' }}">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 mb-2" for="price">Price</label>
+      <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        type="number" step="0.01" name="price" id="price" required value="{{ vehicle.price if vehicle else '' }}">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 mb-2" for="year">Year</label>
+      <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        type="number" name="year" id="year" required value="{{ vehicle.year if vehicle else '' }}">
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-gray-700 mb-2" for="status">Status</label>
+      <select class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        name="status" id="status" required>
+        <option value="Available" {% if vehicle and vehicle.status=='Available' %}selected{% endif %}>Available</option>
+        <option value="Sold" {% if vehicle and vehicle.status=='Sold' %}selected{% endif %}>Sold</option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 mb-2" for="image">Image</label>
+      <input class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        type="file" name="image" id="image" {% if not vehicle %}required{% endif %}>
+    </div>
+
+    <button type="submit"
+      class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium">
+      {{ action }}
+    </button>
+  </form>
 </div>
 {% endblock %}

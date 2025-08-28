@@ -4,6 +4,8 @@ from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
+
 
 load_dotenv()
 
@@ -151,32 +153,49 @@ def dashboard():
     return render_template('dashboard.html', user_name=session.get('user_name'), user_role=session.get('user_role'), vehicles=vehicles)
 
 
+UPLOAD_FOLDER = "static/images"
+
 @app.route('/vehicles/create', methods=['GET', 'POST'])
 def create_vehicle():
     if 'user_id' not in session or session.get('user_role') != 'salesperson':
         flash("You must be logged in as salesperson.", "warning")
         return redirect(url_for('login'))
+
     if request.method == 'POST':
         name = request.form['name']
         model = request.form['model']
         price = request.form['price']
         year = request.form['year']
         status = request.form['status']
+
+        # ✅ ناخدو الملف من الفورم
+        file = request.files['image']
+        image_path = None
+
+        if file and file.filename != "":
+            filename = secure_filename(file.filename) 
+            image_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(image_path) 
+
+            image_path = "/" + image_path  
+
         conn = connect_to_db()
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "INSERT INTO Vehicles (name, model, price, year, status) VALUES (%s, %s, %s, %s, %s)",
-                (name, model, price, year, status)
+                "INSERT INTO Vehicles (name, model, price, year, status, image) VALUES (%s, %s, %s, %s, %s, %s)",
+                (name, model, price, year, status, image_path)
             )
             conn.commit()
             flash("Vehicle created successfully.", "success")
-        except Exception:
+        except Exception as e:
             conn.rollback()
-            flash("Failed to create vehicle.", "danger")
+            flash("Failed to create vehicle: " + str(e), "danger")
         finally:
             conn.close()
+
         return redirect(url_for('dashboard'))
+
     return render_template('vehicle_form.html', action="Create")
 
 
@@ -185,34 +204,52 @@ def edit_vehicle(vehicle_id):
     if 'user_id' not in session or session.get('user_role') != 'salesperson':
         flash("You must be logged in as salesperson.", "warning")
         return redirect(url_for('login'))
+
     conn = connect_to_db()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     cursor.execute("SELECT * FROM Vehicles WHERE id = %s", (vehicle_id,))
     vehicle = cursor.fetchone()
+
     if not vehicle:
         conn.close()
         flash("Vehicle not found.", "warning")
         return redirect(url_for('dashboard'))
+
     if request.method == 'POST':
         name = request.form['name']
         model = request.form['model']
         price = request.form['price']
         year = request.form['year']
         status = request.form['status']
+
+        # التعامل مع الصورة الجديدة
+        image_file = request.files.get('image')
+        image_path = vehicle['image']  # نخلي path القديمة إذا ما تحركتش
+
+        if image_file and image_file.filename != '':
+            from werkzeug.utils import secure_filename
+            import os
+            UPLOAD_FOLDER = 'static/images'
+            filename = secure_filename(image_file.filename)
+            image_path = os.path.join(UPLOAD_FOLDER, filename)
+            image_file.save(image_path)
+            image_path = '/' + image_path  # باش يخزن فـ DB
+
         try:
             cursor2 = conn.cursor()
             cursor2.execute(
-                "UPDATE Vehicles SET name=%s, model=%s, price=%s, year=%s, status=%s WHERE id=%s",
-                (name, model, price, year, status, vehicle_id)
+                "UPDATE Vehicles SET name=%s, model=%s, price=%s, year=%s, status=%s, image=%s WHERE id=%s",
+                (name, model, price, year, status, image_path, vehicle_id)
             )
             conn.commit()
             flash("Vehicle updated successfully.", "success")
-        except Exception:
+        except Exception as e:
             conn.rollback()
-            flash("Failed to update vehicle.", "danger")
+            flash(f"Failed to update vehicle. Error: {e}", "danger")
         finally:
             conn.close()
         return redirect(url_for('dashboard'))
+
     conn.close()
     return render_template('vehicle_form.html', action="Edit", vehicle=vehicle)
 
@@ -236,7 +273,7 @@ def delete_vehicle(vehicle_id):
     return redirect(url_for('dashboard'))
 
 
-@app.route('/salles/create', methods=['GET', 'POST'])
+@app.route('/sales/create', methods=['GET', 'POST'])
 def create_salle():
     if 'user_id' not in session:
         flash("You must be logged in.", "warning")
@@ -249,7 +286,7 @@ def create_salle():
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "INSERT INTO salles (name, location, salesperson_id) VALUES (%s, %s, %s)",
+                "INSERT INTO sales (name, location, salesperson_id) VALUES (%s, %s, %s)",
                 (name, location, salesperson_id)
             )
             conn.commit()
