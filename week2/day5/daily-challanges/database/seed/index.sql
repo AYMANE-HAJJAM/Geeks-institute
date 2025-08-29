@@ -29,9 +29,9 @@ CREATE TABLE Vehicles (
 
 CREATE TABLE sales (
     id SERIAL PRIMARY KEY,
-    vehicle_id INTEGER NOT NULL REFERENCES Vehicles(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    salesperson_id INTEGER NOT NULL REFERENCES salespeople(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    vehicle_id INTEGER REFERENCES Vehicles(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    salesperson_id INTEGER NOT NULL REFERENCES salespeople(id) ON DELETE SET NULL ON UPDATE CASCADE,
     sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     price DECIMAL(10,2) NOT NULL
 );
@@ -39,21 +39,13 @@ CREATE TABLE sales (
 
 
 
-INSERT INTO Vehicles (name, model, price, year, status, image) VALUES
-('Toyota', 'Camry', 25000, 2022, 'Available', '/static/images/toyota.jpg'),
-('BMW', 'X5', 50000, 2023, 'Sold', '/static/images/bmw.jpg'),
-('Mercedes', 'C-Class', 45000, 2021, 'Available', '/static/images/mercedes.jpg'),
-('Honda', 'Civic', 20000, 2022, 'Available', '/static/images/honda.jpg'),
-('Audi', 'A4', 40000, 2023, 'Sold', '/static/images/audi.jpg');
 
 INSERT INTO Vehicles (name, model, price, year, status, image) VALUES
-('Ford', 'Mustang', 30000, 2022, 'Available', '/static/images/ford.jpg')
+('Toyota', 'Camry', 25000, 2022, 'Available', '/static/images/toyota.jpg',1),
+('BMW', 'X5', 50000, 2023, 'Sold', '/static/images/bmw.jpg',1),
+('Mercedes', 'C-Class', 45000, 2021, 'Available', '/static/images/mercedes.jpg',1),
+('Honda', 'Civic', 20000, 2022, 'Available', '/static/images/honda.jpg',1),
+('Audi', 'A4', 40000, 2023, 'Sold', '/static/images/audi.jpg',1);
 
-
-
-DROP TABLE IF EXISTS salles CASCADE;
-DROP TABLE IF EXISTS sales CASCADE;
-DROP TABLE IF EXISTS Vehicles CASCADE;
-DROP TABLE IF EXISTS customers CASCADE;
-DROP TABLE IF EXISTS salespeople CASCADE;
-DROP TABLE IF EXISTS Vehicles CASCADE;
+INSERT INTO Vehicles (name, model, price, year, status, image) VALUES
+('Ford', 'Mustang', 30000, 2022, 'Available', '/static/images/ford.jpg',1);
