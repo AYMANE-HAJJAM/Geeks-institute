@@ -20,22 +20,27 @@
         </p>
 
         <div class="mt-auto flex gap-2">
-            <a href="/vehicles/{{ vehicle.id }}" 
-               class="flex-1 px-3 py-2 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 text-center">
+            <a href="/vehicles/{{ vehicle.id }}"
+                class="flex-1 px-3 py-2 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 text-center">
                 Details
             </a>
-
             {% if vehicle.status == 'Available' %}
+            {% if session.customer_id %}
             <form action="{{ url_for('create_sale') }}" method="POST" class="flex-1"
-                  onsubmit="return confirm('Are you sure you want to complete this sale?');">
+                onsubmit="return confirm('Are you sure you want to complete this sale?');">
                 <input type="hidden" name="vehicle_id" value="{{ vehicle.id }}">
-
-                <button type="submit" 
-                        class="w-full px-3 py-2 text-xs bg-gray-600 text-white rounded hover:bg-gray-700">
+                <button type="submit" class="w-full px-3 py-2 text-xs bg-gray-600 text-white rounded hover:bg-gray-700">
                     Sale
                 </button>
             </form>
+            {% else %}
+            <a href="{{ url_for('login') }}"
+                class="flex-1 w-full px-3 py-2 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 text-center">
+                Sale
+            </a>
             {% endif %}
+            {% endif %}
+
         </div>
     </div>
     {% endfor %}
