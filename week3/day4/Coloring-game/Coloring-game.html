@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(20, 20px);
+            grid-template-rows: repeat(20, 20px);
+        }
+
+        .square {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+
+        button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="color" id="colorBox">
+    <button id="clearButton">Clear</button>
+    <div id="grid"></div>
+    <script>
+        const grid = document.getElementById('grid');
+        const colorBox = document.getElementById('colorBox');
+        const clearButton = document.getElementById('clearButton');
+
+        let currentColor = colorBox.value;
+        colorBox.addEventListener('input', () => {
+            currentColor = colorBox.value;
+        });
+
+        for (let i = 0; i < 400; i++) {
+            const square = document.createElement('div');
+            square.classList.add('square');
+            grid.appendChild(square);
+        }
+        let isDrawing = false;
+
+        grid.addEventListener('mousedown', function () {
+            isDrawing = true;
+        });
+
+        grid.addEventListener('mouseup', function () {
+            isDrawing = false;
+        });
+
+        grid.addEventListener('mouseover', function (event) {
+            if (isDrawing && event.target.classList.contains('square')) {
+                event.target.style.backgroundColor = currentColor;
+            }
+        });
+
+        clearButton.addEventListener('click', () => {
+            const squares = document.querySelectorAll('.square');
+            squares.forEach(square => {
+                square.style.backgroundColor = 'white';
+            });
+        });
+    </script>
+</body>
+
+</html>
