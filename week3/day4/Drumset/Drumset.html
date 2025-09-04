@@ -6,68 +6,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            background: url(./ConcertGeneric.png);
+            background-attachment: fixed;
+            background-size: contain;
+            background-position: center;
+        }
+
+        .container {
+            display: flex;
             flex-wrap: wrap;
-            gap: 20px;
         }
 
-        .key {
-            border: 3px solid #fff;
-            border-radius: 10px;
-            padding: 20px 40px;
-            font-size: 24px;
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .drum {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px;
+            height: 100px;
+            width: 100px;
             color: white;
-            background: #444;
-            cursor: pointer;
-            transition: all 0.1s;
-            user-select: none;
+            border: 2px solid #ffcc02;
         }
 
-        .key:active,
+        .drum kbd {
+            font-size: 3em;
+        }
+
+        .drum span {
+            color: #ffcc02;
+            font-size: 1em;
+        }
+
+        .drum:hover {
+            transform: scale(1.07);
+        }
+
         .playing {
-            background: #5304f2;
-            transform: scale(1.1);
-            box-shadow: 0 0 20px #00bbff;
+            transform: scale(1.2) !important;
+            border: 2px solid #ffcc02;
+            box-shadow: 0px 0px 20px 5px #ffcc02;
         }
     </style>
 </head>
 
 <body>
-    <div class="key" data-key="65">A</div>
-    <div class="key" data-key="83">S</div>
-    <div class="key" data-key="68">D</div>
-    <div class="key" data-key="70">F</div>
-    <div class="key" data-key="71">G</div>
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="drum" data-key="65"><kbd>A</kbd><span class="note">Boom</span></div>
+        <div class="drum" data-key="83"><kbd>S</kbd><span class="note">Clap</span></div>
+        <div class="drum" data-key="68"><kbd>D</kbd><span class="note">HiHat</span></div>
+        <div class="drum" data-key="70"><kbd>F</kbd><span class="note">Kick</span></div>
+        <div class="drum" data-key="71"><kbd>G</kbd><span class="note">OpenHat</span></div>
+        <div class="drum" data-key="72"><kbd>H</kbd><span class="note">Ride</span></div>
+        <div class="drum" data-key="74"><kbd>J</kbd><span class="note">Snare</span></div>
+        <div class="drum" data-key="75"><kbd>K</kbd><span class="note">Tink</span></div>
+        <div class="drum" data-key="76"><kbd>L</kbd><span class="note">Tom</span></div>
 
-    <audio data-key="65" src="sounds/clap.mp3"></audio>
-    <audio data-key="83" src="sounds/hihat.mp3"></audio>
-    <audio data-key="68" src="sounds/kick.mp3"></audio>
-    <audio data-key="70" src="sounds/openhat.mp3"></audio>
-    <audio data-key="71" src="sounds/ride.mp3"></audio>
+
+        <audio data-key="65" src="./sounds/boom.wav" type="audio/wav"></audio>
+        <audio data-key="83" src="./sounds/clap.wav" type="audio/wav"></audio>
+        <audio data-key="68" src="./sounds/hihat.wav" type="audio/wav"></audio>
+        <audio data-key="70" src="./sounds/kick.wav" type="audio/wav"></audio>
+        <audio data-key="71" src="./sounds/openhat.wav" type="audio/wav"></audio>
+        <audio data-key="72" src="./sounds/ride.wav" type="audio/wav"></audio>
+        <audio data-key="74" src="./sounds/snare.wav" type="audio/wav"></audio>
+        <audio data-key="75" src="./sounds/tink.wav" type="audio/wav"></audio>
+        <audio data-key="76" src="./sounds/tom.wav" type="audio/wav"></audio>
+    </div>
     <script>
         function playSound(keyCode) {
             const audio = document.querySelector(`audio[data-key="${keyCode}"]`);
-            const key = document.querySelector(`.key[data-key="${keyCode}"]`);
-            if (!audio) return;
+            const drum = document.querySelector(`.drum[data-key="${keyCode}"]`);
+            if (!audio || !drum) return;
 
             audio.currentTime = 0;
             audio.play();
 
-            key.classList.add('playing');
-            setTimeout(() => key.classList.remove('playing'), 100);
+            drum.classList.add('playing');
+            setTimeout(() => drum.classList.remove('playing'), 100);
         }
-
         window.addEventListener('keydown', (e) => playSound(e.keyCode));
-        document.querySelectorAll('.key').forEach(key => {
-            key.addEventListener('click', () => {
-                playSound(key.getAttribute('data-key'));
+        document.querySelectorAll('.drum').forEach(drum => {
+            drum.addEventListener('click', () => {
+                playSound(drum.getAttribute('data-key'));
             });
         });
     </script>
+
 
 </body>
 
