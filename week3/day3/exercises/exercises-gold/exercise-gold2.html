@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Remove Selected Color</title>
+</head>
+
+<body>
+
+    <form>
+        <select id="colorSelect">
+            <option>Red</option>
+            <option>Green</option>
+            <option>White</option>
+            <option>Black</option>
+        </select>
+        <input type="button" value="Select and Remove" id="removeBtn">
+    </form>
+
+    <script>
+        const select = document.getElementById('colorSelect');
+        const button = document.getElementById('removeBtn');
+
+        button.addEventListener('click', removecolor);
+
+        function removecolor() {
+            const selectedIndex = select.selectedIndex;
+            if (selectedIndex >= 0) {
+                select.remove(selectedIndex);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
