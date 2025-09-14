@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        class Video {
+            constructor(title, uploader, time) {
+                this.title = title;
+                this.uploader = uploader;
+                this.time = time;
+            }
+            watch() {
+                console.log(`${this.uploader} watched all ${this.time} of ${this.title}`);
+            }
+        }
+        let video1 = new Video('The Matrix', 'Neo', 120);
+        video1.watch();
+        let video2 = new Video('Inception', 'Cobb', 148);
+        video2.watch();
+        const videoData = [
+            { title: "Python Crash Course", uploader: "Charlie", time: 600 },
+            { title: "CSS Grid Tutorial", uploader: "Diana", time: 400 },
+            { title: "HTML for Beginners", uploader: "Eve", time: 350 },
+            { title: "Node.js Express Guide", uploader: "Frank", time: 720 },
+            { title: "AI with TensorFlow", uploader: "Grace", time: 900 }
+        ];
+        videoData.forEach(video => {
+            let vid = new Video(video.title, video.uploader, video.time);
+            vid.watch();
+        });
+    </script>
+</body>
+
+</html>
