@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        //Exercise 1:
+        function compareToTen(num) {
+            return new Promise((resolve, reject) => {
+                if (num <= 10) {
+                    resolve(num + " is less than or equal to 10");
+                } else {
+                    reject(num + " is greater than 10");
+                }
+            });
+        }
+
+        //In the example, the promise should reject
+        compareToTen(15)
+            .then(result => console.log(result))
+            .catch(error => console.log(error))
+
+        //In the example, the promise should resolve
+        compareToTen(8)
+            .then(result => console.log(result))
+            .catch(error => console.log(error))
+
+        //Exercise 2:
+        const promise1 = new Promise((resolve, reject) => {
+            setTimeout(() => resolve('success'), 4000);
+        });
+        promise1.then(result => console.log(result)); // After 4 seconds, "success" is logged to the console
+
+        //Exercise 3:
+        const resolvedPromise = Promise.resolve(3);
+
+        resolvedPromise
+            .then(result => console.log("Resolved:", result))
+            .catch(error => console.log("Error:", error));   
+
+        const rejectedPromise = Promise.reject("Boo!");
+
+        rejectedPromise
+            .then(result => console.log("Resolved:", result)) 
+            .catch(error => console.log("Rejected:", error)); 
+
+
+    </script>
+</body>
+
+</html>
+
+</html>

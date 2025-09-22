@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="sunriseForm">
+        <h3>City 1</h3>
+        <label>Latitude: <input type="number" step="any" id="lat1" required></label>
+        <label>Longitude: <input type="number" step="any" id="lng1" required></label>
+        <h3>City 2</h3>
+        <label>Latitude: <input type="number" step="any" id="lat2" required></label>
+        <label>Longitude: <input type="number" step="any" id="lng2" required></label>
+        <button type="submit">Get Sunrise Times</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        document.getElementById('sunriseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const lat1 = document.getElementById('lat1').value;
+            const lng1 = document.getElementById('lng1').value;
+            const lat2 = document.getElementById('lat2').value;
+            const lng2 = document.getElementById('lng2').value;
+
+            const url1 = `https://api.sunrise-sunset.org/json?lat=${lat1}&lng=${lng1}&formatted=0`;
+            const url2 = `https://api.sunrise-sunset.org/json?lat=${lat2}&lng=${lng2}&formatted=0`;
+
+            Promise.all([
+                fetch(url1).then(res => res.json()),
+                fetch(url2).then(res => res.json())
+            ]).then(([data1, data2]) => {
+                const sunrise1 = new Date(data1.results.sunrise).toLocaleTimeString();
+                const sunrise2 = new Date(data2.results.sunrise).toLocaleTimeString();
+                document.getElementById('result').innerHTML = `
+                    <p>City 1 Sunrise: ${sunrise1}</p>
+                    <p>City 2 Sunrise: ${sunrise2}</p>
+                `;
+            }).catch(err => {
+                document.getElementById('result').textContent = 'Error fetching sunrise times.';
+            });
+        });
+    </script>
+</body>
+</html>
