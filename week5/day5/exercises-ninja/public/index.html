@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Quiz App</title>
+</head>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .quiz-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .quiz-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    h1 {
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    #quiz {
+        transition: all 0.5s ease;
+    }
+
+    #question {
+        font-size: 1.4rem;
+        margin-bottom: 30px;
+        color: #444;
+        line-height: 1.6;
+        font-weight: 500;
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        border-radius: 15px;
+        border-left: 5px solid #667eea;
+    }
+
+    #options {
+        margin-bottom: 30px;
+    }
+
+    .option {
+        display: block;
+        margin: 15px 0;
+        padding: 15px 20px;
+        border: 2px solid #e1e8ed;
+        border-radius: 12px;
+        cursor: pointer;
+        background: #fff;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #555;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        text-align: left;
+    }
+
+    .option::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .option:hover {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-color: #667eea;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .option:hover::before {
+        left: 100%;
+    }
+
+    .option.selected {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-color: #667eea;
+        transform: scale(1.02);
+    }
+
+    .option.correct {
+        background: linear-gradient(135deg, #56ab2f, #a8e6cf) !important;
+        border-color: #56ab2f !important;
+        color: white !important;
+        animation: correctPulse 0.6s ease;
+    }
+
+    .option.incorrect {
+        background: linear-gradient(135deg, #ff6b6b, #ffa8a8) !important;
+        border-color: #ff6b6b !important;
+        color: white !important;
+        animation: shake 0.5s ease;
+    }
+
+    @keyframes correctPulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-5px);
+        }
+
+        75% {
+            transform: translateX(5px);
+        }
+    }
+
+    button {
+        margin-top: 20px;
+        padding: 15px 35px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 50px;
+        color: white;
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    button:hover:not(:disabled) {
+        background: linear-gradient(135deg, #764ba2, #667eea);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    #feedback {
+        margin-top: 20px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        padding: 15px;
+        border-radius: 10px;
+        transition: all 0.5s ease;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    #feedback.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    #feedback.correct {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+        border: 2px solid #c3e6cb;
+    }
+
+    #feedback.incorrect {
+        background: linear-gradient(135deg, #f8d7da, #f1b0b7);
+        color: #721c24;
+        border: 2px solid #f1b0b7;
+    }
+
+    #score {
+        text-align: center;
+        padding: 30px;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        border-radius: 20px;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        box-shadow: 0 15px 35px rgba(240, 147, 251, 0.4);
+        animation: scoreReveal 0.8s ease;
+    }
+
+    @keyframes scoreReveal {
+        0% {
+            opacity: 0;
+            transform: scale(0.8) rotateY(180deg);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1) rotateY(0deg);
+        }
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e1e8ed;
+        border-radius: 3px;
+        margin-bottom: 30px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        width: 0%;
+        transition: width 0.5s ease;
+        border-radius: 3px;
+    }
+
+    .question-counter {
+        color: #888;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+
+    .restart-btn {
+        margin-top: 20px;
+        background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+    }
+
+    .restart-btn:hover {
+        background: linear-gradient(135deg, #a8e6cf, #56ab2f);
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 480px) {
+        .quiz-container {
+            padding: 25px 20px;
+            margin: 10px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        #question {
+            font-size: 1.2rem;
+        }
+
+        .option {
+            padding: 12px 15px;
+            font-size: 0.95rem;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<body>
+    <div class="quiz-container">
+        <h1>✨ Quiz Master</h1>
+        <div id="quiz">
+            <div class="question-counter">
+                <span id="current-question">1</span> of <span id="total-questions">5</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            <div id="question"></div>
+            <div id="options"></div>
+            <button id="submit">Submit Answer</button>
+            <div id="feedback"></div>
+        </div>
+        <div id="score" class="hidden"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
