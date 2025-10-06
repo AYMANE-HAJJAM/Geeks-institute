@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Register</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+body { font-family: Arial, Helvetica, sans-serif; padding: 20px; }
+form { max-width: 420px; margin: 0 auto; }
+label { display:block; margin-top:10px }
+input { width:100%; padding:8px; margin-top:6px }
+button[disabled] { opacity: 0.5 }
+</style>
+</head>
+<body>
+<h1>Register</h1>
+<form id="registerForm">
+<label>Name<input type="text" id="name" name="name" required></label>
+<label>Last Name<input type="text" id="lastName" name="lastName" required></label>
+<label>Email<input type="email" id="email" name="email" required></label>
+<label>Username<input type="text" id="username" name="username" required></label>
+<label>Password<input type="password" id="password" name="password" required></label>
+<button type="submit" id="submitBtn" disabled>Register</button>
+</form>
+<p id="message"></p>
+
+
+<script>
+const form = document.getElementById('registerForm');
+const submitBtn = document.getElementById('submitBtn');
+const inputs = [...form.querySelectorAll('input')];
+const msg = document.getElementById('message');
+
+
+function updateSubmit() {
+const ok = inputs.every(i => i.value.trim() !== '');
+submitBtn.disabled = !ok;
+}
+inputs.forEach(i => i.addEventListener('input', updateSubmit));
+
+
+form.addEventListener('submit', async (e) => {
+e.preventDefault();
+const payload = Object.fromEntries(new FormData(form).entries());
+const res = await fetch('/api/register', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(payload)
+});
+const data = await res.json();
+if (!res.ok) {
+msg.textContent = data.message || 'Error';
+msg.style.color = 'red';
+} else {
+msg.textContent = data.message || 'Registered';
+msg.style.color = 'green';
+form.reset();
+updateSubmit();
+}
+});
+
+
+updateSubmit();
+</script>
+</html>

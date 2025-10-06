@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz React</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #answers button {
+      padding: 15px;
+      border: none;
+      border-radius: 28px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+    }
+    #answers button.selected {
+      background-color: gray;
+    }
+    #answers button.correct {
+      background-color: green;
+    }
+    #answers button.wrong {
+      background-color: red;
+    }
+    #submit2 {
+      background-color: chartreuse;
+      border-radius: 10px;
+      width: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+    #result {
+      margin: 10px 0;
+      font-weight: bold;
+      padding: 5px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <button type="button" id="submit">Start Quiz</button>
+
+  <div id="game" style="border: 4px solid black;width:600px;height:auto;padding:30px;display:none">
+    <div id="progress"></div>
+    <div id="result"></div>
+
+    <h1>Question:</h1>
+    <p id="question" style="font-size: medium;"></p>
+
+    <h5>Which is the correct answer:</h5>
+    <input id="answers" type="text"/>
+    <button id="submit2">Submit</button>
+  </div>
+
+<script>
+let question = document.getElementById('question');
+let result = document.getElementById('result');
+let answers = document.getElementById('answers');
+let submit = document.getElementById('submit');
+let submit2 = document.getElementById('submit2');
+let game = document.getElementById('game');
+let progress = document.getElementById('progress');
+let questions = [];
+let currentindex = 0;
+let score = 0;
+let selectedAnswer = null;
+submit.addEventListener('click', async () => {
+  const data = await fetch('http://localhost:5000/questions');
+  questions = await data.json();
+  game.style.display = 'block';
+  submit.style.display = 'none';
+  currentindex = 0;
+  score = 0;
+  loadQuestion();
+});
+function loadQuestion() {
+  if (currentindex >= questions.length) {
+    game.innerHTML = `<h2>Quiz Finished!</h2><p>Your score: ${score}/${questions.length}</p>`;
+    return;
+  }
+  let currentQuestion = questions[currentindex];
+  question.textContent = currentQuestion.question;
+  answers.innerHTML = "";
+  result.textContent = "";
+  result.style.background = "transparent";
+  selectedAnswer = null;
+  progress.textContent = `Question ${currentindex + 1} / ${questions.length}`;
+  
+}
+submit2.addEventListener('click', () => {
+  if (!selectedAnswer) {
+    alert("⛔ Please select an answer!");
+    return;
+  }
+  let currentQuestion = questions[currentindex];
+  let allBtns = answers.querySelectorAll("button");
+  allBtns.forEach(b => b.disabled = true);
+  if (selectedAnswer === currentQuestion.correctAnswer) {
+    result.textContent = "✅ Correct answer!";
+    result.style.background = "green";
+    allBtns.forEach(b => {
+      if (b.textContent === selectedAnswer) b.classList.add('correct');
+    });
+    score++;
+  } else {
+    result.textContent = "❌ Wrong answer!";
+    result.style.background = "red";
+    allBtns.forEach(b => {
+      if (b.textContent === selectedAnswer) b.classList.add('wrong');
+      if (b.textContent === currentQuestion.correctAnswer) b.classList.add('correct');
+    });
+  }
+  currentindex++;
+  setTimeout(loadQuestion, 1500);
+});
+</script>
+</body>
+</html>

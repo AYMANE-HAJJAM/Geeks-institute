@@ -1,0 +1,11 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const app = express();
+const port = 3000;
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(cors());
+const greetRouter = require('./routes/greet.routes.js');
+app.use('/emojies', greetRouter);
+app.listen(port, () => console.log(`Server running at http://localhost:${port}`));

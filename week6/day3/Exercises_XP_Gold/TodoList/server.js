@@ -1,0 +1,13 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const app = express();
+const port = 3000;
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(cors());
+const { connectDB, sequelize } = require('./config/database');
+connectDB();
+const todoRouter = require('./routes/todos.routes.js');
+ app.use('/todos', todoRouter);
+app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
