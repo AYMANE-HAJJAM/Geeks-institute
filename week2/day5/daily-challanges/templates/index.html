@@ -1,48 +1,428 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+
+<!-- Hero Header Section -->
+<div class="mb-10">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+            <h1 class="text-5xl font-bold text-white mb-3 flex items-center gap-3">
+                <i class="bi bi-car-front-fill"></i>
+                Available Vehicles
+            </h1>
+            <p class="text-blue-100 text-xl">Discover your dream car today</p>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="flex gap-3">
+            <div class="relative">
+                <input type="text" id="searchInput" placeholder="Search vehicles..."
+                    class="w-64 px-4 py-3 pl-10 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-md focus:outline-none focus:border-white transition-all duration-200">
+                <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+            </div>
+            <button onclick="toggleFilters()"
+                class="px-4 py-3 bg-white/90 backdrop-blur-md text-gray-800 rounded-xl font-semibold hover:bg-white transition-all duration-200 flex items-center gap-2">
+                <i class="bi bi-funnel-fill"></i>
+                Filters
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div id="filtersPanel" class="hidden mt-6 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                <select
+                    class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500">
+                    <option value="">All Status</option>
+                    <option value="available">Available</option>
+                    <option value="sold">Sold</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Price Range</label>
+                <select
+                    class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500">
+                    <option value="">All Prices</option>
+                    <option value="0-20000">Under $20,000</option>
+                    <option value="20000-40000">$20,000 - $40,000</option>
+                    <option value="40000+">Above $40,000</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Year</label>
+                <select
+                    class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500">
+                    <option value="">All Years</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="older">Older</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Sort By</label>
+                <select
+                    class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500">
+                    <option value="newest">Newest First</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="year">Year</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Bar -->
+<div class="mb-8 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg p-5">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center">
+            <div class="text-3xl font-bold text-blue-600">{{ vehicles|length }}</div>
+            <div class="text-sm text-gray-600">Total Vehicles</div>
+        </div>
+        <div class="text-center">
+            <div class="text-3xl font-bold text-green-600">{{ vehicles|selectattr('status', 'equalto',
+                'Available')|list|length }}</div>
+            <div class="text-sm text-gray-600">Available</div>
+        </div>
+        <div class="text-center">
+            <div class="text-3xl font-bold text-red-600">{{ vehicles|selectattr('status', 'equalto', 'Sold')|list|length
+                }}</div>
+            <div class="text-sm text-gray-600">Sold</div>
+        </div>
+        <div class="text-center">
+            <div class="text-3xl font-bold text-purple-600">New</div>
+            <div class="text-sm text-gray-600">This Week</div>
+        </div>
+    </div>
+</div>
+
+<!-- Vehicles Grid -->
+<div id="vehiclesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     {% for vehicle in vehicles %}
-    <div class="bg-white border border-gray-200 rounded-lg shadow p-4 flex flex-col">
-        <img src="{{ vehicle.image }}" alt="Car Image" class="w-full h-36 object-cover rounded mb-3">
-        <h3 class="text-lg font-semibold">{{ vehicle.name }} ({{ vehicle.model }})</h3>
-        <p class="text-sm text-gray-500">Year: {{ vehicle.year }}</p>
-        <p class="text-sm text-gray-500">Price: ${{ vehicle.price }}</p>
-        <p class="text-sm mb-3">
-            Status:
-            <span class="px-2 py-1 rounded text-xs font-semibold 
+    <div
+        class="vehicle-card bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 flex flex-col group">
+
+        <!-- Image Container -->
+        <div class="relative overflow-hidden h-52 bg-gradient-to-br from-gray-100 to-gray-200">
+            <img src="{{ vehicle.image }}" alt="{{ vehicle.name }}"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+
+            <!-- Status Badge -->
+            <div class="absolute top-3 right-3">
+                <span class="px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-md
+                    {% if vehicle.status == 'Available' %}
+                        bg-green-500/90 text-white
+                    {% else %}
+                        bg-red-500/90 text-white
+                    {% endif %}">
+                    <i
+                        class="bi bi-{% if vehicle.status == 'Available' %}check-circle-fill{% else %}x-circle-fill{% endif %} mr-1"></i>
+                    {{ vehicle.status }}
+                </span>
+            </div>
+
+            <!-- Wishlist Heart -->
+            <button onclick="toggleWishlist({{ vehicle.id }})"
+                class="absolute top-3 left-3 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-200 shadow-lg">
+                <i class="bi bi-heart text-gray-600 text-lg"></i>
+            </button>
+
+            <!-- Price Badge -->
+            <div class="absolute bottom-3 left-3">
+                <div class="bg-blue-600/95 backdrop-blur-md text-white px-5 py-2 rounded-full font-bold shadow-lg">
+                    <span class="text-sm">$</span>
+                    <span class="text-xl">{{ vehicle.price }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Content -->
+        <div class="p-5 flex-1 flex flex-col">
+            <!-- Vehicle Info -->
+            <div class="mb-4">
+                <h3
+                    class="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">
+                    {{ vehicle.name }}
+                </h3>
+                <div class="flex items-center gap-3 text-sm text-gray-600 mb-3">
+                    <span class="flex items-center gap-1">
+                        <i class="bi bi-tag-fill text-blue-500"></i>
+                        {{ vehicle.model }}
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <i class="bi bi-calendar-fill text-blue-500"></i>
+                        {{ vehicle.year }}
+                    </span>
+                </div>
+
+                <!-- Quick Specs -->
+                <div class="flex gap-2 text-xs">
+                    <span class="px-2 py-1 bg-gray-100 rounded-lg text-gray-600">
+                        <i class="bi bi-speedometer mr-1"></i>Low Miles
+                    </span>
+                    <span class="px-2 py-1 bg-gray-100 rounded-lg text-gray-600">
+                        <i class="bi bi-star-fill mr-1"></i>Top Rated
+                    </span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-auto flex gap-2">
+                <a href="/vehicles/{{ vehicle.id }}"
+                    class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl font-semibold text-center hover:bg-blue-700 hover:scale-105 transition-all duration-200 shadow-md text-sm">
+                    <i class="bi bi-eye-fill mr-1"></i>
+                    View
+                </a>
+
                 {% if vehicle.status == 'Available' %}
-                    bg-green-100 text-green-700
+                {% if session.customer_id %}
+                <a href="{{ url_for('create_sale', vehicle_id=vehicle.id) }}"
+                    class="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-xl font-semibold text-center hover:bg-green-700 hover:scale-105 transition-all duration-200 shadow-md text-sm">
+                    <i class="bi bi-cart-check-fill mr-1"></i>
+                    Buy
+                </a>
                 {% else %}
-                    bg-red-100 text-red-700
-                {% endif %}">
-                {{ vehicle.status }}
-            </span>
-        </p>
+                <a href="{{ url_for('login') }}"
+                    class="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-xl font-semibold text-center hover:bg-green-700 hover:scale-105 transition-all duration-200 shadow-md text-sm">
+                    <i class="bi bi-cart-check-fill mr-1"></i>
+                    Buy
+                </a>
+                {% endif %}
+                {% else %}
+                <div
+                    class="flex-1 px-4 py-2.5 bg-gray-300 text-gray-600 rounded-xl font-semibold text-center cursor-not-allowed text-sm">
+                    <i class="bi bi-lock-fill mr-1"></i>
+                    Sold
+                </div>
+                {% endif %}
+            </div>
+        </div>
 
-        <div class="mt-auto flex gap-2">
-            <a href="/vehicles/{{ vehicle.id }}"
-                class="flex-1 px-3 py-2 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 text-center">
-                Details
-            </a>
-            {% if vehicle.status == 'Available' %}
-            {% if session.customer_id %}
-            <form action="{{ url_for('create_sale') }}" method="POST" class="flex-1"
-                onsubmit="return confirm('Are you sure you want to complete this sale?');">
-                <input type="hidden" name="vehicle_id" value="{{ vehicle.id }}">
-                <button type="submit" class="w-full px-3 py-2 text-xs bg-gray-600 text-white rounded hover:bg-gray-700">
-                    Sale
-                </button>
-            </form>
-            {% else %}
-            <a href="{{ url_for('login') }}"
-                class="flex-1 w-full px-3 py-2 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 text-center">
-                Sale
-            </a>
-            {% endif %}
-            {% endif %}
-
+        <!-- Hover Effect Line -->
+        <div
+            class="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300">
         </div>
     </div>
     {% endfor %}
 </div>
+
+<!-- Empty State -->
+{% if vehicles|length == 0 %}
+<div class="text-center py-20">
+    <div class="inline-block p-10 bg-white rounded-3xl shadow-2xl">
+        <i class="bi bi-car-front text-8xl text-gray-300 mb-6"></i>
+        <h3 class="text-3xl font-bold text-gray-800 mb-3">No Vehicles Available</h3>
+        <p class="text-gray-600 text-lg mb-6">Check back later for new arrivals!</p>
+        <a href="/"
+            class="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all duration-200">
+            <i class="bi bi-house-fill mr-2"></i>Go Home
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Enhanced Chat Button -->
+<div class="fixed bottom-8 right-8 z-50">
+    <!-- Chat Toggle Button -->
+    <button onclick="toggleChat()"
+        class="relative bg-gradient-to-r from-blue-600 to-blue-700 text-white w-16 h-16 rounded-full shadow-2xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 focus:outline-none group">
+        <i id="chatIcon" class="bi bi-chat-dots-fill text-2xl group-hover:scale-110 transition-transform"></i>
+        <span
+            class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold animate-pulse">3</span>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chatWindow"
+        class="hidden absolute h-50 bottom-24 right-0 w-96 max-h-[500px] bg-white rounded-3xl shadow-2xl border-2 border-gray-100 flex flex-col">
+        <!-- Chat Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-3xl flex-shrink-0">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                        <i class="bi bi-robot text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold">Vehicle Assistant</h3>
+                        <p class="text-xs text-blue-100">Online now</p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()"
+                    class="text-white hover:bg-white/20 w-8 h-8 rounded-full transition-colors">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chatMessages" class="p-4 flex-1 overflow-y-auto space-y-3 bg-gray-50">
+            <!-- Welcome Message -->
+            <div class="flex items-start gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-robot text-white text-sm"></i>
+                </div>
+                <div class="bg-white rounded-2xl rounded-tl-sm p-3 shadow-md max-w-[80%]">
+                    <p class="text-gray-800 text-sm">👋 Hi! I'm your vehicle assistant. Ask me anything!</p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="flex flex-wrap gap-2 pl-10">
+                <button onclick="quickQuestion('Show available cars')"
+                    class="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors">
+                    🚗 Available
+                </button>
+                <button onclick="quickQuestion('Best deals')"
+                    class="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors">
+                    💰 Deals
+                </button>
+                <button onclick="quickQuestion('Latest models')"
+                    class="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors">
+                    ✨ Latest
+                </button>
+            </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="typingIndicator" class="hidden px-4 py-2 bg-gray-50 flex-shrink-0">
+            <div class="flex items-center gap-2 text-gray-500 text-xs">
+                <div class="flex gap-1">
+                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                        style="animation-delay: 0s"></span>
+                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                        style="animation-delay: 0.2s"></span>
+                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                        style="animation-delay: 0.4s"></span>
+                </div>
+                <span>Typing...</span>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="p-3 border-t bg-white rounded-b-3xl flex-shrink-0">
+            <form onsubmit="sendMessage(event)" class="flex gap-2">
+                <input type="text" id="messageInput"
+                    class="flex-1 border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                    placeholder="Type your question...">
+                <button type="submit"
+                    class="bg-gradient-to-r from-blue-600 to-blue-700 text-white w-10 h-10 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // Toggle Filters
+    function toggleFilters() {
+        const panel = document.getElementById('filtersPanel');
+        panel.classList.toggle('hidden');
+    }
+
+    // Toggle Chat
+    function toggleChat() {
+        const chatWindow = document.getElementById('chatWindow');
+        const chatIcon = document.getElementById('chatIcon');
+
+        chatWindow.classList.toggle('hidden');
+
+        if (!chatWindow.classList.contains('hidden')) {
+            chatIcon.classList.remove('bi-chat-dots-fill');
+            chatIcon.classList.add('bi-x-lg');
+        } else {
+            chatIcon.classList.remove('bi-x-lg');
+            chatIcon.classList.add('bi-chat-dots-fill');
+        }
+    }
+
+    // Quick Question
+    function quickQuestion(question) {
+        document.getElementById('messageInput').value = question;
+        sendMessage(new Event('submit'));
+    }
+
+    // Send Message
+    function sendMessage(event) {
+        event.preventDefault();
+        const input = document.getElementById('messageInput');
+        const message = input.value.trim();
+        if (!message) return;
+
+        // Add user message
+        addMessage(message, 'user');
+        input.value = '';
+
+        // Show typing indicator
+        document.getElementById('typingIndicator').classList.remove('hidden');
+
+        // Send to backend
+        fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('typingIndicator').classList.add('hidden');
+                addMessage(data.response, 'assistant');
+            })
+            .catch(error => {
+                document.getElementById('typingIndicator').classList.add('hidden');
+                addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+            });
+    }
+
+    // Add Message
+    function addMessage(text, sender) {
+        const messagesDiv = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex items-start gap-2 ' + (sender === 'user' ? 'justify-end' : '');
+
+        if (sender === 'assistant') {
+            const avatar = document.createElement('div');
+            avatar.className = 'w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0';
+            avatar.innerHTML = '<i class="bi bi-robot text-white text-sm"></i>';
+            messageDiv.appendChild(avatar);
+        }
+
+        const messageContent = document.createElement('div');
+        messageContent.className = sender === 'user'
+            ? 'bg-blue-600 text-white rounded-2xl rounded-tr-sm p-3 max-w-[80%] shadow-md'
+            : 'bg-white rounded-2xl rounded-tl-sm p-3 max-w-[80%] shadow-md';
+
+        messageContent.innerHTML = `<p class="text-sm ${sender === 'user' ? 'text-white' : 'text-gray-800'}">${text}</p>`;
+        messageDiv.appendChild(messageContent);
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Toggle Wishlist
+    function toggleWishlist(vehicleId) {
+        const heart = event.target;
+        if (heart.classList.contains('bi-heart')) {
+            heart.classList.remove('bi-heart');
+            heart.classList.add('bi-heart-fill');
+            heart.classList.add('text-red-500');
+        } else {
+            heart.classList.remove('bi-heart-fill');
+            heart.classList.remove('text-red-500');
+            heart.classList.add('bi-heart');
+        }
+    }
+
+    // Search Functionality
+    document.getElementById('searchInput')?.addEventListener('input', function (e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.vehicle-card');
+
+        cards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+        });
+    });
+</script>
+
 {% endblock %}

@@ -11,38 +11,142 @@
     <style>
         body {
             font-family: "Poppins", sans-serif;
-            background-color: blanchedalmond;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
     </style>
 </head>
 
-<body class="bg-gray-100">
-    <!-- navbar -->
-    <nav class="bg-white shadow-sm py-3 px-6">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <!-- Brand -->
-            <a href="/" class="text-xl font-semibold text-gray-800 tracking-tight">Car Dealership</a>
+<body>
+    <!-- Modern Navbar -->
+    <nav class="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Brand with Icon -->
+                <a href="/" class="flex items-center gap-3 group">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white text-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <i class="bi bi-car-front-fill"></i>
+                    </div>
+                    <span
+                        class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                        Car Dealership
+                    </span>
+                </a>
 
-            <!-- Auth buttons -->
-            <div class="flex items-center space-x-2">
-                {% if session.user_id %}
-                    {% if session.user_role == 'salesperson' %}
-                        <a href="/dashboard"
-                            class="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition">Dashboard</a>
+                <!-- Navigation Links (Desktop) -->
+                <div class="hidden md:flex items-center gap-2">
+                    <a href="/"
+                        class="px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+                        <i class="bi bi-house-fill mr-2"></i>Home
+                    </a>
+                    {% if session.user_id and session.user_role == 'salesperson' %}
+                    <a href="/dashboard"
+                        class="px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+                        <i class="bi bi-speedometer2 mr-2"></i>Dashboard
+                    </a>
                     {% endif %}
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="flex items-center gap-3">
+                    {% if session.user_id %}
+                    <!-- User Info -->
+                    <div class="hidden sm:flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                            {{ session.user_name[0]|upper if session.user_name else 'U' }}
+                        </div>
+                        <span class="text-sm font-semibold text-gray-700">{{ session.user_name }}</span>
+                    </div>
+
                     <a href="/logout"
-                        class="px-4 py-2 rounded-full bg-gray-200 text-gray-800 text-sm font-medium hover:bg-gray-300 transition">Logout</a>
-                {% else %}
+                        class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-semibold hover:from-red-600 hover:to-red-700 hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg">
+                        <i class="bi bi-box-arrow-right mr-2"></i>Logout
+                    </a>
+                    {% else %}
                     <a href="/login"
-                        class="px-4 py-2 rounded-full bg-gray-200 text-gray-800 text-sm font-medium hover:bg-gray-300 transition">Login</a>
+                        class="px-5 py-2.5 rounded-xl bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 hover:scale-105 transition-all duration-200">
+                        <i class="bi bi-person-fill mr-2"></i>Login
+                    </a>
                     <a href="/signup"
-                        class="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition">Signup</a>
-                {% endif %}
+                        class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 text-white text-sm font-semibold hover:from-blue-600 hover:to-blue-800 hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg">
+                        <i class="bi bi-person-plus-fill mr-2"></i>Signup
+                    </a>
+                    {% endif %}
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                        <i class="bi bi-list text-2xl text-gray-700"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden mt-4 pt-4 border-t border-gray-200">
+                <div class="flex flex-col gap-2">
+                    <a href="/"
+                        class="px-4 py-3 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+                        <i class="bi bi-house-fill mr-2"></i>Home
+                    </a>
+                    {% if session.user_id and session.user_role == 'salesperson' %}
+                    <a href="/dashboard"
+                        class="px-4 py-3 rounded-lg text-gray-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+                        <i class="bi bi-speedometer2 mr-2"></i>Dashboard
+                    </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>
 
-    {% block content %}{% endblock %}
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white/95 backdrop-blur-md shadow-lg mt-12">
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white text-xl">
+                        <i class="bi bi-car-front-fill"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-800">Car Dealership</p>
+                        <p class="text-sm text-gray-600">Your trusted car partner</p>
+                    </div>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-sm text-gray-600">© 2025 Car Dealership. All rights reserved.</p>
+                    <div class="flex gap-4 mt-2 justify-center md:justify-end">
+                        <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            <i class="bi bi-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            <i class="bi bi-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">
+                            <i class="bi bi-instagram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn?.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
 
 </body>
+
 </html>

@@ -333,34 +333,50 @@ def delete_vehicle(vehicle_id):
 # ===========================
 # Create Sale
 # ===========================
-@app.route('/create_sale', methods=['POST'])
-def create_sale():
-    """Create a sale for a vehicle (only for logged-in customers)"""
+@app.route('/create_sale/<int:vehicle_id>', methods=['GET', 'POST'])
+def create_sale(vehicle_id):
+    """Handle vehicle sale process"""
     if 'customer_id' not in session:
         flash("You need to login as a customer to make a sale", "error")
         return redirect(url_for('login'))
 
-    vehicle_id = request.form['vehicle_id']
+    # Get vehicle information
+    conn = connect_to_db()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    cursor.execute("SELECT * FROM Vehicles WHERE id = %s AND status = 'Available'", (vehicle_id,))
+    vehicle = cursor.fetchone()
+    
+    if not vehicle:
+        flash("Vehicle not found or not available.", "error")
+        return redirect(url_for('index'))
+
+    if request.method == 'GET':
+        conn.close()
+        return render_template('salle_form.html', vehicle=vehicle)
+
+    # Handle POST request for creating sale
     customer_id = session['customer_id']
 
-    conn = connect_to_db()
-    cur = conn.cursor()
+    try:
+        # Insert sale only if vehicle is available
+        cursor.execute("""
+            INSERT INTO sales (vehicle_id, customer_id, salesperson_id, price)
+            SELECT v.id, %s, v.salesperson_id, v.price 
+            FROM vehicles v WHERE v.id = %s AND v.status = 'Available'
+        """, (customer_id, vehicle_id))
 
-    # Insert sale only if vehicle is available
-    cur.execute("""
-        INSERT INTO sales (vehicle_id, customer_id, salesperson_id, price)
-        SELECT v.id, %s, v.salesperson_id, v.price 
-        FROM vehicles v WHERE v.id = %s AND v.status = 'Available'
-    """, (customer_id, vehicle_id))
-
-    # Mark vehicle as sold
-    cur.execute("UPDATE vehicles SET status = 'Sold' WHERE id = %s", (vehicle_id,))
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    flash("Sale completed successfully!", "success")
-    return redirect(url_for('index'))
+        # Mark vehicle as sold
+        cursor.execute("UPDATE vehicles SET status = 'Sold' WHERE id = %s", (vehicle_id,))
+        conn.commit()
+        flash("Sale completed successfully!", "success")
+        return redirect(url_for('index'))
+    except Exception as e:
+        conn.rollback()
+        flash("Failed to complete sale. Please try again.", "error")
+        return render_template('salle_form.html', vehicle=vehicle)
+    finally:
+        cursor.close()
+        conn.close()
 
 
 # ===========================
@@ -433,6 +449,59 @@ def dashboard_stats():
         "vehicle_years": vehicle_years
     })
 
+
+# ===========================
+# Chat Assistant
+# ===========================
+@app.route('/chat', methods=['POST'])
+def chat():
+    """Handle chat messages about vehicles"""
+    data = request.get_json()
+    message = data.get('message', '').lower()
+
+    # Get current vehicles for context
+    conn = connect_to_db()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    cursor.execute("SELECT * FROM Vehicles")
+    vehicles = cursor.fetchall()
+    conn.close()
+
+    # Process different types of questions
+    if 'available' in message or 'for sale' in message:
+        available = [v for v in vehicles if v['status'] == 'Available']
+        if available:
+            response = "Yes! We have these vehicles available:\n"
+            for v in available:
+                response += f"• {v['name']} ({v['year']}) - ${v['price']}\n"
+        else:
+            response = "Sorry, we don't have any vehicles available right now."
+
+    elif 'price' in message or 'cost' in message or 'expensive' in message or 'cheap' in message:
+        if vehicles:
+            cheapest = min(vehicles, key=lambda x: float(x['price']))
+            most_expensive = max(vehicles, key=lambda x: float(x['price']))
+            response = f"Our prices range from ${cheapest['price']} for the {cheapest['name']} to ${most_expensive['price']} for the {most_expensive['name']}."
+        else:
+            response = "I don't have any price information right now."
+
+    elif 'newest' in message or 'latest' in message or 'year' in message:
+        if vehicles:
+            newest = max(vehicles, key=lambda x: int(x['year']))
+            response = f"Our newest vehicle is the {newest['year']} {newest['name']}."
+        else:
+            response = "I don't have any vehicle year information right now."
+
+    elif 'model' in message or 'brand' in message or 'make' in message:
+        models = set(v['model'] for v in vehicles)
+        if models:
+            response = "We have these models: " + ", ".join(models)
+        else:
+            response = "I don't have any model information right now."
+
+    else:
+        response = "I can help you with information about our available vehicles, prices, models, and years. What would you like to know?"
+
+    return jsonify({'response': response})
 
 # ===========================
 # Run the Flask App
